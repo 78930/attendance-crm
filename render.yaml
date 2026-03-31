@@ -1,10 +1,11 @@
 services:
   - type: web
     name: attendance-crm-server
-    env: node
+    runtime: node
+    rootDir: server
     plan: free
-    buildCommand: cd server && npm install
-    startCommand: cd server && node src/server.js
+    buildCommand: npm install
+    startCommand: node src/server.js
     envVars:
       - key: NODE_ENV
         value: production
@@ -13,21 +14,13 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CLIENT_URL
-        fromService:
-          name: attendance-crm-client
-          type: static_site
-          envVarKey: RENDER_EXTERNAL_URL
+        value: https://attendance-crm-client.onrender.com
       - key: MONGODB_URI
         sync: false
-  - type: static_site
+  - type: web
     name: attendance-crm-client
-    env: static
+    runtime: static
+    rootDir: client
     plan: free
-    buildCommand: cd client && npm install && npm run build
-    staticPublishPath: ./client/dist
-    envVars:
-      - key: RENDER_EXTERNAL_URL
-        fromService:
-          name: attendance-crm-client
-          type: static_site
-          envVarKey: RENDER_EXTERNAL_URL
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
