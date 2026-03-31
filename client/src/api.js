@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+const API_BASE = 'https://attendance-crm-server.onrender.com/api';
 
 async function request(path, { method = 'GET', body, token, headers = {} } = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
@@ -23,16 +23,24 @@ async function request(path, { method = 'GET', body, token, headers = {} } = {})
   }
 
   const contentType = response.headers.get('content-type') || '';
-  if (contentType.includes('text/csv')) {
-    return response.text();
+  if (contentType.includes('application/json')) {
+    return response.json();
   }
-
-  return response.json();
+  return null;
 }
 
-export const api = {
-  get: (path, token) => request(path, { method: 'GET', token }),
-  post: (path, body, token) => request(path, { method: 'POST', body, token }),
-  put: (path, body, token) => request(path, { method: 'PUT', body, token }),
-  delete: (path, token) => request(path, { method: 'DELETE', token }),
-};
+export function get(path, token) {
+  return request(path, { method: 'GET', token });
+}
+
+export function post(path, body, token) {
+  return request(path, { method: 'POST', body, token });
+}
+
+export function put(path, body, token) {
+  return request(path, { method: 'PUT', body, token });
+}
+
+export function del(path, token) {
+  return request(path, { method: 'DELETE', token });
+}
